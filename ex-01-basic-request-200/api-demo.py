@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request,jsonify
+from flask import Flask, request,jsonify,json
 app = Flask(__name__)
  
 @app.route("/demo", methods=['GET','POST'])
@@ -8,7 +8,9 @@ def demo():
     # get request body as text
     body = request.get_data(as_text=True)
     # print("body:",body)
-    app.logger.info("Request body: " + body)
+    # app.logger.info("Request body: " + body)
+
+
     books = [
         {'id': 0,
         'title': 'Deep',
@@ -25,10 +27,23 @@ def demo():
         'author': 'Delany',
         'first_sentence': 'the autumnal city.',
         'published': '1935'}
-    ]
- 
+        ]
 
-    return jsonify(books)
+
+    if request.method == 'POST':
+        id = request.form.get("id")
+        app.logger.info("POST Payload : ") 
+        print (id)
+        results = []
+        for book in books:
+                if book['id'] == int(id):
+                    results.append(book)
+
+            # Use the jsonify function from Flask to convert our list of
+            # Python dictionaries to the JSON format.
+        return jsonify(results)
+    else : 
+        return jsonify(books)
 
 @app.route("/", methods=['GET','POST'])
 def index():
